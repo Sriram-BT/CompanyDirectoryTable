@@ -1,0 +1,29 @@
+{
+  "companies": [
+    { "id": 1, "name": "Google", "industry": "Technology", "location": "USA", "employees": 120000, "founded": 1998 },
+    { "id": 2, "name": "Infosys", "industry": "IT Services", "location": "India", "employees": 40000, "founded": 1981 },
+    { "id": 3, "name": "Amazon", "industry": "E-commerce", "location": "USA", "employees": 150000, "founded": 1994 },
+    { "id": 4, "name": "Tata Consultancy Services", "industry": "IT Services", "location": "India", "employees": 600000, "founded": 1968 },
+    { "id": 5, "name": "Microsoft", "industry": "Technology", "location": "USA", "employees": 220000, "founded": 1975 },
+    { "id": 6, "name": "Accenture", "industry": "Consulting", "location": "Ireland", "employees": 720000, "founded": 1989 },
+    { "id": 7, "name": "Reliance Industries", "industry": "Conglomerate", "location": "India", "employees": 350000, "founded": 1966 },
+    { "id": 8, "name": "Apple", "industry": "Technology", "location": "USA", "employees": 160000, "founded": 1976 },
+    { "id": 9, "name": "IBM", "industry": "Technology", "location": "USA", "employees": 280000, "founded": 1911 },
+    { "id": 10, "name": "Wipro", "industry": "IT Services", "location": "India", "employees": 250000, "founded": 1945 },
+    { "id": 11, "name": "Deloitte", "industry": "Consulting", "location": "USA", "employees": 345000, "founded": 1845 },
+    { "id": 12, "name": "Capgemini", "industry": "Consulting", "location": "France", "employees": 350000, "founded": 1967 },
+    { "id": 13, "name": "Flipkart", "industry": "E-commerce", "location": "India", "employees": 30000, "founded": 2007 },
+    { "id": 14, "name": "Samsung", "industry": "Electronics", "location": "South Korea", "employees": 270000, "founded": 1938 },
+    { "id": 15, "name": "Siemens", "industry": "Engineering", "location": "Germany", "employees": 300000, "founded": 1847 },
+    { "id": 16, "name": "Adobe", "industry": "Software", "location": "USA", "employees": 25000, "founded": 1982 },
+    { "id": 17, "name": "PayPal", "industry": "Fintech", "location": "USA", "employees": 26000, "founded": 1998 },
+    { "id": 18, "name": "Sony", "industry": "Electronics", "location": "Japan", "employees": 111000, "founded": 1946 },
+    { "id": 19, "name": "Uber", "industry": "Transportation", "location": "USA", "employees": 36000, "founded": 2009 },
+    { "id": 20, "name": "Samsung Biologics", "industry": "Biotech", "location": "South Korea", "employees": 12000, "founded": 2011 },
+    { "id": 21, "name": "Oracle", "industry": "Software", "location": "USA", "employees": 132000, "founded": 1977 },
+    { "id": 22, "name": "HCL Technologies", "industry": "IT Services", "location": "India", "employees": 225000, "founded": 1976 },
+    { "id": 23, "name": "Cisco", "industry": "Networking", "location": "USA", "employees": 79000, "founded": 1984 },
+    { "id": 24, "name": "LG Electronics", "industry": "Electronics", "location": "South Korea", "employees": 75000, "founded": 1958 },
+    { "id": 25, "name": "Bosch", "industry": "Engineering", "location": "Germany", "employees": 400000, "founded": 1886 }
+  ]
+}
