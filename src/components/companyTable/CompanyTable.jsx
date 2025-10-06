@@ -136,12 +136,18 @@ function CompanyTable() {
 
 
 
-  if (sortField) {
+if (sortField) {
     filteredCompanies = [...filteredCompanies].sort((a, b) => {
       const valA = a[sortField];
       const valB = b[sortField];
 
-      if (typeof valA === "string") {
+      const numA = Number(valA);
+      const numB = Number(valB);
+      const isNumeric = !isNaN(numA) && !isNaN(numB);
+
+      if (isNumeric) {
+        return sortOrder === "asc" ? numA - numB : numB - numA;
+      } else if (typeof valA === "string") {
         return sortOrder === "asc"
           ? valA.localeCompare(valB)
           : valB.localeCompare(valA);
@@ -150,7 +156,6 @@ function CompanyTable() {
       }
     });
   }
-
   const startIndex = (page - 1) * limit + 1;
   const endIndex = Math.min(page * limit, totalCompanies);
 
