@@ -11,7 +11,7 @@ function CompanyTable() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // ✅ Dynamic page size
+  const limit = 10;
   const [totalCompanies, setTotalCompanies] = useState(0);
 
   const [filters, setFilters] = useState({
@@ -29,36 +29,32 @@ function CompanyTable() {
   const [sortField, setSortField] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // Fetch companies 
-  const fetchCompanies = async (pageNumber = 1, limit = rowsPerPage) => {
+  const fetchCompanies = async (pageNumber = 1) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/companies?_page=${pageNumber}&_limit=${limit}`
+        `http://localhost:5000/companies?_page=${pageNumber}&_per_page=${limit}`
       );
       if (!res.ok) throw new Error("Failed to fetch");
 
       const data = await res.json();
+      const total = res.headers.get("X-Total-Count") || data.items;
 
-      const totalHeader = res.headers.get("X-Total-Count");
-      const total = totalHeader !== null ? Number(totalHeader) : data.length;
-
-      setTotalCompanies(total);
-      setCompanies(data);
+      setTotalCompanies(Number(total) || 0);
+      setCompanies(data.data);
     } catch (err) {
       console.error("Error fetching companies:", err);
       setCompanies([]);
-      setTotalCompanies(0);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompanies(page, rowsPerPage);
-  }, [page, rowsPerPage]);
+    fetchCompanies(page);
+  }, [page]);
 
-  const totalPages = Math.ceil(totalCompanies / rowsPerPage) || 1;
+  const totalPages = Math.ceil(totalCompanies / limit) || 1;
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
@@ -98,13 +94,13 @@ function CompanyTable() {
     setCustomFilters([]);
   };
 
-  //  Apply text & custom filters
   let filteredCompanies = companies.filter((c) => {
     let matches = true;
 
     matches =
       matches &&
-      (filters.id === "" || c.id.toString().includes(filters.id)) &&
+      (filters.id === "" ||
+        c.id.toString().includes(filters.id)) &&
       c.name.toLowerCase().includes(filters.name.toLowerCase()) &&
       c.industry.toLowerCase().includes(filters.industry.toLowerCase()) &&
       c.location.toLowerCase().includes(filters.location.toLowerCase()) &&
@@ -112,6 +108,7 @@ function CompanyTable() {
         c.employees.toString().includes(filters.employees)) &&
       (filters.founded === "" ||
         c.founded.toString().includes(filters.founded));
+
 
     customFilters.forEach(({ field, operator, value }) => {
       const val = c[field];
@@ -137,7 +134,8 @@ function CompanyTable() {
     return matches;
   });
 
-  //  Apply sorting
+
+
   if (sortField) {
     filteredCompanies = [...filteredCompanies].sort((a, b) => {
       const valA = a[sortField];
@@ -153,12 +151,11 @@ function CompanyTable() {
     });
   }
 
-  const startIndex = (page - 1) * rowsPerPage + 1;
-  const endIndex = Math.min(page * rowsPerPage, totalCompanies);
+  const startIndex = (page - 1) * limit + 1;
+  const endIndex = Math.min(page * limit, totalCompanies);
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      {/* Toolbar */}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginBottom: "10px" }}>
         <IconButton onClick={() => setFilterDialogOpen(true)}>
           <FilterListIcon />
@@ -184,26 +181,116 @@ function CompanyTable() {
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
         }}>
           <tr>
-            {["id", "name", "industry", "location", "employees", "founded"].map((field) => (
-              <th key={field}>
-                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                  <TextField
-                    variant="standard"
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    type={field === "id" || field === "employees" || field === "founded" ? "number" : "text"}
-                    value={filters[field]}
-                    onChange={(e) => handleFilterChange(field, e.target.value)}
-                    fullWidth
-                  />
-                  <span
-                    style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
-                    onClick={() => handleSort(field)}
-                  >
-                    {renderSortIcon(field)}
-                  </span>
-                </div>
-              </th>
-            ))}
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="ID"
+                  type="number"
+                  value={filters.id}
+                  onChange={(e) => handleFilterChange("id", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("id")}
+                >
+                  {renderSortIcon("id")}
+                </span>
+              </div>
+            </th>
+
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="Name"
+                  value={filters.name}
+                  onChange={(e) => handleFilterChange("name", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("name")}
+                >
+                  {renderSortIcon("name")}
+                </span>
+              </div>
+            </th>
+
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="Industry"
+                  value={filters.industry}
+                  onChange={(e) => handleFilterChange("industry", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("industry")}
+                >
+                  {renderSortIcon("industry")}
+                </span>
+              </div>
+            </th>
+
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="Location"
+                  value={filters.location}
+                  onChange={(e) => handleFilterChange("location", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("location")}
+                >
+                  {renderSortIcon("location")}
+                </span>
+              </div>
+            </th>
+
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="Employees"
+                  type="number"
+                  value={filters.employees}
+                  onChange={(e) => handleFilterChange("employees", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("employees")}
+                >
+                  {renderSortIcon("employees")}
+                </span>
+              </div>
+            </th>
+
+            <th>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <TextField
+                  variant="standard"
+                  placeholder="Founded"
+                  type="number"
+                  value={filters.founded}
+                  onChange={(e) => handleFilterChange("founded", e.target.value)}
+                  fullWidth
+                />
+                <span
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                  onClick={() => handleSort("founded")}
+                >
+                  {renderSortIcon("founded")}
+                </span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -227,8 +314,8 @@ function CompanyTable() {
           )}
         </tbody>
       </table>
-
       {/* Pagination */}
+
       <div
         style={{
           position: "sticky",
@@ -242,28 +329,22 @@ function CompanyTable() {
           marginTop: "10px",
         }}
       >
-        <div style={{ color: "#666", fontSize: "14px" }}>
+        <div
+          style={{
+            color: "#666",
+            fontSize: "14px",
+          }}
+        >
           Results: {startIndex} - {endIndex} of {totalCompanies}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div>
-            <label style={{ marginRight: "5px", fontSize: "14px" }}>Rows per page:</label>
-            <select
-              value={rowsPerPage}
-              onChange={(e) => {
-                setPage(1);
-                setRowsPerPage(Number(e.target.value));
-              }}
-            >
-              {[5, 10, 20, 50].map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
           <button
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
             disabled={page === 1 || loading}
@@ -284,6 +365,8 @@ function CompanyTable() {
         </div>
       </div>
 
+
+      {/* Filter Dialog */}
       <FilterDialog
         open={filterDialogOpen}
         onClose={() => setFilterDialogOpen(false)}
